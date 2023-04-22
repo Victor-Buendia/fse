@@ -3,7 +3,7 @@
 echo "Criando arquivo .env ..."
 touch .env
 if [ ! -s .env ]
-	then echo -e "matricula=\nusuario=" > .env
+	then echo -e "matricula=\"\"\nusuario=\"\"" > .env
 	echo -e "\nArquivo .env vazio. Insira as credenciais e rode o script novamente..."
 	exit
 fi
