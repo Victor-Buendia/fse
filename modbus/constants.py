@@ -8,3 +8,5 @@ request_menu = {
 	, "FLOAT": 0xA2
 	, "STRING": 0xA3
 }
+
+destination_register = 0x01

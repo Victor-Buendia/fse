@@ -1,4 +1,4 @@
-from message import Message
+from modbus import Modbus
 from uart import UART
 import constants as C
 import time
@@ -8,7 +8,7 @@ import signal
 
 class Program:
 	def __init__(self):
-		self.message = Message()
+		self.message = Modbus()
 		self.uart = UART()
 		signal.signal(signal.SIGINT, self.signal_handler)
 	
@@ -21,7 +21,6 @@ class Program:
 		exit(0)
 
 	def start(self):
-
 		while True:
 			self.menu()
 			option = input()
@@ -35,7 +34,7 @@ class Program:
 				self.uart.close()
 				exit()
 			elif option == 1:
-				print(self.send_message())
+				self.send_message()
 			elif option == 2:
 				self.request_menu()
 				option = input()
@@ -55,18 +54,18 @@ class Program:
 						break
 					print(self.get_message(C.request_menu[value]))
 					option = input()
-			
+	
 		self.uart.close()
 
 	def menu(self):
-		self.clear()
+		# self.clear()
 		print('------------ MENU -----------')
 		print('(0) Exit')
 		print('(1) Send data')
 		print('(2) Request data')
 
 	def request_menu(self):
-		self.clear()
+		# self.clear()
 		print('-------- REQUEST DATA -------')
 		print('(0) Go back')
 		print('(1) Request INTEGER')
@@ -75,17 +74,18 @@ class Program:
 
 	def send_message(self):
 		msg = input('Type in your message: ')
-		self.uart.write(self.message.get_package(message=msg))
+		self.uart.write(self.message.create_package(register_addr=C.destination_register, func_code=0x16, data=[msg]))
 		time.sleep(1)
 
 	def get_message(self, command):
-		self.uart.write(self.message.get_package(command=command))
+		msg = self.message.create_package(register_addr=C.destination_register, func_code=0x23, data=[command])
+		self.uart.write(msg)
 		time.sleep(1)
 		if command == C.request_menu["STRING"]:
-			msg_len, = struct.unpack("B", self.uart.read(bytes=1))
+			origin_register, code, subcode, msg_len = struct.unpack("BBBB", self.uart.read(bytes=4))
 			msg = self.uart.read(bytes=msg_len)
+			crc = self.uart.read(bytes=2)
 			return(msg.decode('utf-8'))
 		else:
-			msg = self.uart.read(bytes=4)
-			num, = struct.unpack("i" if command == C.request_menu["INT"] else "f", msg)
+			origin_register, code, subcode, num, crc = struct.unpack(f'<BBB{"i" if command == C.request_menu["INT"] else "f"}H', self.uart.read(bytes=9))
 			return(num)
