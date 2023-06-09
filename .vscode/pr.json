@@ -1,10 +1,10 @@
+
 {
     "name": "FSE",
-    "host": "164.41.98.28",
+    "host": "rpi3-05.local",
     "protocol": "sftp",
-    "port": 13508,
-    "username": "victoralvim",
-    "remotePath": "/home/victoralvim",
+    "username": "pi",
+    "remotePath": "/home/pi",
     "uploadOnSave": true,
     "useTempFile": false,
     "openSsh": false,
