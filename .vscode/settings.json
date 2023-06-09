@@ -3,5 +3,7 @@
 	"files.associations": {
 		"stdbool.h": "c",
 		"stdio.h": "c"
-	}
+	},
+	"python.linting.pylintEnabled": true,
+	"python.linting.enabled": false
 }
