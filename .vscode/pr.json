@@ -1,7 +1,6 @@
-
 {
     "name": "FSE",
-    "host": "rpi3-05.local",
+    "host": "rpi3-16.local",
     "protocol": "sftp",
     "username": "pi",
     "remotePath": "/home/pi",
